@@ -1,0 +1,62 @@
+/* Footer.css */
+
+footer{
+  height :600px;
+}
+:root {
+  --footer-bg-color: #f8f8f8;
+  --footer-text-color: #888;
+  --footer-hover-color: #333;
+}
+
+footer, .footer-relative, .footer-fixed {
+  position: relative;
+  width: 100%;
+  background-color: var(--footer-bg-color);
+  padding: 20px 0;
+  border-top: 1px solid #ddd; 
+}
+
+.footer-fixed {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  padding: 40px 0;
+  background-color: var(--footer-bg-color);
+  opacity: 0.9; 
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-around;
+}
+
+.footer-column {
+  text-align: center;
+}
+
+
+
+.footer-bottom {
+  text-align: center;
+  margin-top: 300px;
+  border-top: 1px solid #2727e7; 
+  
+}
+
+.footer-bottom p {
+  font-size: 14px;
+  color: var(--footer-text-color);
+}
+
+.footer-bottom a {
+
+  color: var(--footer-text-color);
+  text-decoration: none;
+  transition: color 0.3s ease; 
+}
+
+.footer-bottom a:hover {
+  color: var(--footer-hover-color);
+  text-decoration: underline;
+}
