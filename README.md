@@ -1,3 +1,8 @@
+Lien du trello : https://trello.com/b/eXJDdxGh/projet-ia
+
+Lien de la présentation :
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
