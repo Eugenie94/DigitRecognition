@@ -65,13 +65,14 @@ export default function Body() {
         <div className="zone-manuscrit">
           <div className="manuscrit-card">
             <div className="manuscrit-column">
-              <h1 className="saisie">OCR Zone d'écriture en manuscrit</h1>
+              <h1 className="saisie">OCR manuscrit</h1>
               <canvas
                 className="manuscrit-canvas"
                 width={500}
                 height={300}
                 ref={canvasRef}
               ></canvas>
+                <button className='rest'>Reset</button>
             </div>
             <div className="manuscrit-column">
               <h1 className="saisie">Prédiction</h1>
@@ -80,6 +81,7 @@ export default function Body() {
                 width={500}
                 height={300}
               ></canvas>
+              <button className='predire'>Prédire</button>
             </div>
           </div>
         </div>
