@@ -1,5 +1,8 @@
 /* Body.css */
-
+:root{
+  --body-bg-image: url('https://www.super-insolite.com/wp-content/uploads/2019/04/serre-livre-trone-de-fer-1.jpg');
+  --body-manuscrit-card :url('https://img.freepik.com/vector-gratis/fondo-rombos-brillantes_1053-185.jpg');
+}
 
 /* manuscrit-card */
 .manuscrit-card {
@@ -9,20 +12,17 @@
   width: 60%;
   margin-bottom: 50px;
   box-shadow:20px 20px 20px  rgba(0, 0, 0, 0.2);
+  background-image: var(--body-manuscrit-card)
 }
-
-.manuscrit-column {
-  flex: 1;
-}
-
 /* Zone de texte manuscrit */
-canvas {
+.manuscrit-canvas {
   width: 100%;
   border: 1px solid #ddd;
   border-radius: 5px;
   margin-top: 10px;
+  background-color: #ffff;
 }
-
+/* Boutons css */
 .rest, .predire {
   font-size: 1.5em;
   text-transform: uppercase;
@@ -33,33 +33,25 @@ canvas {
   height: 20%;
   width: 75%;
 }
-
-
-
 /* Zone de manuscrit */
 .zone-manuscrit {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 20px;
+  margin-top: 100px;
 }
-
 /* Colonne de manuscrit */
 .manuscrit-card {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap:5px;
 }
-
 /* Ajout de styles pour la classe saisie */
-.saisie {
+.saisie{
   text-align: center;
   font-size: 20px;
   font-style: italic;
-  color: #acababcc;
-}
-
-.container {
-  width: '100%';
-  height: 500px;
+  color: #000000;
+  background-color: #cdc9bf62;
+  height: 45px;
 }

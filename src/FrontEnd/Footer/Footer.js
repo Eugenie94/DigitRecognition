@@ -14,7 +14,7 @@ export default function Footer() {
             target="_blank"
             rel="noopener noreferrer"
           >
-        <FontAwesomeIcon icon={faGithub} size="5x" color="black" />
+        <FontAwesomeIcon icon={faGithub} size="5x" color="white" className='icone' />
           
           </a>
         </div>
@@ -24,7 +24,7 @@ export default function Footer() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <FontAwesomeIcon icon={faTrello} size="5x"/>
+            <FontAwesomeIcon icon={faTrello} size="5x" color="white" className='icone' />
           </a>
           
         </div>

@@ -3,8 +3,12 @@
 footer{
   margin-top: 10%;
   height :500px;
+  background-image: linear-gradient(rgba(36, 36, 228, 0.258), rgb(0, 0, 0)),
+  var(--footer-bg-image);
 }
-:root {
+
+:root { 
+  --footer-bg-image:url('https://img.freepik.com/photos-premium/vue-rapprochee-du-motif-sans-couture-cuir-diamant-comme-arriere-plan_630065-1904.jpg');
   --footer-bg-color: #f8f8f8;
   --footer-text-color: #888;
   --footer-hover-color: #333;
@@ -57,4 +61,8 @@ footer, .footer-relative, .footer-fixed {
 .footer-bottom a:hover {
   color: var(--footer-hover-color);
   text-decoration: underline;
+}
+.icone{
+  color: #ffb700;
+
 }

@@ -60,8 +60,8 @@ export default function Body() {
   }, [canvasRef])
 
   return (
-    <div>
-      <div className="container">
+
+    
         <div className="zone-manuscrit">
           <div className="manuscrit-card">
             <div className="manuscrit-column">
@@ -85,7 +85,7 @@ export default function Body() {
             </div>
           </div>
         </div>
-      </div>
-    </div>
+  
+
   )
 }
