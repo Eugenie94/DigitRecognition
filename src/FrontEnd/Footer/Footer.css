@@ -1,7 +1,7 @@
 /* Footer.css */
 
 footer{
-  margin-top: 5%;
+  margin-top: 10%;
   height :500px;
 }
 :root {
@@ -14,10 +14,9 @@ footer, .footer-relative, .footer-fixed {
   position: relative;
   width: 100%;
   background-color: var(--footer-bg-color);
-  padding: 20px 0;
+  padding: 0px 0;
   border-top: 1px solid #ddd; 
 }
-
 .footer-fixed {
   position: fixed;
   bottom: 0;
@@ -33,14 +32,12 @@ footer, .footer-relative, .footer-fixed {
 }
 
 .footer-column {
+  padding:50px;
   text-align: center;
 }
-
-
-
 .footer-bottom {
   text-align: center;
-  margin-top: 300px;
+  margin-top: 200px;
   border-top: 1px solid #2727e7; 
   
 }

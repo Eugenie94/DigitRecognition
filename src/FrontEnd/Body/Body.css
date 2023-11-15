@@ -6,10 +6,9 @@
   justify-content: center;
   align-items: center;
 }
-
 /* manuscrit-card */
 .manuscrit-card {
-  border: 1px solid #4915d99c;
+  border: 3px solid #ffb700;
   border-radius: 5px;
   padding: 20px;
   width: 65%;
@@ -33,7 +32,6 @@ canvas {
   font-size: 2em;
   text-transform: uppercase;
   background-color: #006ce4;
-  
   border-radius: 5px;
   border: 3px solid #ffb700;
   color: #ffb700;
