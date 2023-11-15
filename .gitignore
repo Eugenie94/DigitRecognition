@@ -2,4 +2,4 @@
 
 # dependencies
 /node_modules
-#/src/Backend/node_modules
+/src/Backend/node_modules
