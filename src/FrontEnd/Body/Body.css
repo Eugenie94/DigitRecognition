@@ -1,19 +1,14 @@
 /* Body.css */
 
-/* Zone de manuscrit */
-.zone-manuscrit {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+
 /* manuscrit-card */
 .manuscrit-card {
   border: 3px solid #ffb700;
   border-radius: 5px;
-  padding: 20px;
-  width: 65%;
-  margin-bottom: 40px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 95px;
+  width: 60%;
+  margin-bottom: 50px;
+  box-shadow:20px 20px 20px  rgba(0, 0, 0, 0.2);
 }
 
 .manuscrit-column {
@@ -29,14 +24,14 @@ canvas {
 }
 
 .rest, .predire {
-  font-size: 2em;
+  font-size: 1.5em;
   text-transform: uppercase;
   background-color: #006ce4;
   border-radius: 5px;
   border: 3px solid #ffb700;
   color: #ffb700;
-  height: 10%;
-  width: 50%;
+  height: 20%;
+  width: 75%;
 }
 
 
@@ -53,7 +48,7 @@ canvas {
 .manuscrit-card {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  gap:5px;
 }
 
 /* Ajout de styles pour la classe saisie */
