@@ -29,7 +29,6 @@ footer, .footer-relative, .footer-fixed {
   background-color: var(--footer-bg-color);
   opacity: 0.9; 
 }
-
 .footer-content {
   display: flex;
   justify-content: space-around;
@@ -45,7 +44,6 @@ footer, .footer-relative, .footer-fixed {
   border-top: 1px solid #2727e7; 
   
 }
-
 .footer-bottom p {
   font-size: 14px;
   color: var(--footer-text-color);

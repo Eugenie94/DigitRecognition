@@ -1,0 +1,6 @@
+_id,image,prediction
+65520ed6a8d1d0ac5b431d1b,/path/to/user3_image.png,1
+65520ed6a8d1d0ac5b431d1c,/path/to/user4_image.png,4
+65520ed6a8d1d0ac5b431d1d,/path/to/user5_image.png,9
+65520ed6a8d1d0ac5b431d1a,/path/to/user2_image.png,7
+65520ed6a8d1d0ac5b431d19,/path/to/user1_image.png,2
