@@ -1,6 +1,8 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const Thing = require("./models/Images");
+const multer = require("multer");
+const Jimp = require("jimp");
  
 mongoose
   .connect(
@@ -26,16 +28,21 @@ app.use((req, res, next) => {
   next();
 });
  
-app.post("/api/Images", (req, res, next) => {
-  delete req.body._id;
-  const image = new Thing({
-    ...req.body,
-  });
-  image
-    .save()
-    .then(() => res.status(201).json({ message: "Objet enregistré !" }))
-    .then(() => res.status(201).json({ message: "Objet enregistré !" }))
-    .catch((error) => res.status(400).json({ error }));
+// Utilisation de multer pour gérer le téléchargement des images
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });4
+
+app.post("/api/Images", upload.single("image"), async (req, res, next) => {
+  try {
+    const pixels = await convertImageToPixels(req.file.buffer);
+    const image = new Thing({ pixels });
+    await image.save();
+
+    res.status(201).json({ message: "Objet enregistré !" });
+  } catch (error) {
+    console.error("Erreur lors de l'enregistrement de l'image :", error);
+    res.status(400).json({ error });
+  }
 });
  
 app.get("/api/Images", (req, res, next) => {
@@ -44,4 +51,20 @@ app.get("/api/Images", (req, res, next) => {
     .catch((error) => res.status(400).json({ error }));
 });
  
+async function convertImageToPixels(imageBuffer) {
+  const image = await Jimp.read(imageBuffer);
+  const width = image.getWidth();
+  const height = image.getHeight();
+  const pixels = [];
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const color = Jimp.intToRGBA(image.getPixelColor(x, y));
+      pixels.push(color);
+    }
+  }
+
+  return pixels;
+}
+
 module.exports = app;
