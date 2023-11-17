@@ -12,20 +12,17 @@ const Body = () => {
     const context = canvas.getContext('2d');
     let isDrawing = false;
  
-    // Methode qui permet d'écrire dans le tableau
     function startDrawing(e) {
       isDrawing = true;
       draw(e);
     }
  
-    // Methode qui permet de stopper l'écriture
     function stopDrawing() {
       isDrawing = false;
       context.beginPath();
       hasDrawing.current = true;
     }
  
-    // Methode qui permet de detecter l'activité d'écriture
     function draw(e) {
       if (!isDrawing) return;
  
@@ -50,7 +47,6 @@ const Body = () => {
       }
     }
  
-    // Ajout des evenements
     const addEventListeners = () => {
       canvas.addEventListener('mousedown', startDrawing);
       canvas.addEventListener('mouseup', stopDrawing);
@@ -58,7 +54,6 @@ const Body = () => {
       window.addEventListener('keydown', handleKeyDown);
     };
  
-    // Suppression des evenements
     const removeEventListeners = () => {
       canvas.removeEventListener('mousedown', startDrawing);
       canvas.removeEventListener('mouseup', stopDrawing);
@@ -73,7 +68,6 @@ const Body = () => {
     };
   }, [canvasRef]);
  
-  // Methode qui permet de reset
   const clearCanvas = () => {
     const canvas = canvasRef.current;
     const context = canvas.getContext('2d');
@@ -83,43 +77,32 @@ const Body = () => {
   };
  
   const ImageTransmission = (image) => {
-    // Prétraitement de l'image avant la prédiction
     let tensor = tf.browser.fromPixels(image).resizeNearestNeighbor([28, 28]).mean(2).expandDims(2).expandDims().toFloat();
     return tensor.div(255.0);
-};
-   const Prediction = async (image) => {
-    // Effectuer la prédiction avec le modèle TensorFlow
+  };
+ 
+  const Prediction = async (image) => {
     let tensor = ImageTransmission(image);
  
     try {
-      // Charger le modèle
       let model = await tf.loadLayersModel('http://localhost:3001/predict/model.json');
  
-      // Obtenir les prédictions
       const predictions = await model.predict(tensor).data();
  
- 
-      // Libérer les ressources du modèle après la prédiction
       model.dispose();
  
-      // Afficher la prédiction dans le canvas
       const updatedPrediction = displayLabel(predictions);
  
-      // Mettre à jour l'état avec la prédiction
       setPrediction(updatedPrediction);
  
- 
-      console.log(updatedPrediction)
- 
-      // Maintenant, vous pouvez appeler la fonction de sauvegarde ici
-      saveDrawing(image);
+      return updatedPrediction;
     } catch (error) {
       console.error('Erreur lors de la prédiction :', error);
+      return null;
     }
   };
  
-// Méthode pour afficher l'étiquette avec la valeur maximale dans le tableau de données
-const displayLabel = (data) => {
+  const displayLabel = (data) => {
     let max = data[0];
     let maxIndex = 0;
  
@@ -136,15 +119,14 @@ const displayLabel = (data) => {
     };
   };
  
-// Fonction asynchrone pour enregistrer un dessin
-const saveDrawing = async () => {
-  const canvas = canvasRef.current;
-  const drawingData = canvas.toDataURL();
+  const saveDrawing = async () => {
+    const canvas = canvasRef.current;
+    const drawingData = canvas.toDataURL();
  
-  const image = new Image();
-  image.src = drawingData;
+    const image = new Image();
+    image.src = drawingData;
  
-  image.onload = async () => {
+    image.onload = async () => {
       const canvasForModel = document.createElement('canvas');
       const contextForModel = canvasForModel.getContext('2d');
       canvasForModel.width = 28;
@@ -156,49 +138,57 @@ const saveDrawing = async () => {
  
       const pixelValues = [];
       for (let i = 0; i < pixelData.length; i += 4) {
-          const pixelValue = (pixelData[i] + pixelData[i + 1] + pixelData[i + 2]) / 3;
-          pixelValues.push(pixelValue);
+        const pixelValue = (pixelData[i] + pixelData[i + 1] + pixelData[i + 2]) / 3;
+        pixelValues.push(pixelValue);
       }
- 
-      // Attendre la résolution de la fonction Prediction avant de continuer
-      const updatedPrediction = await Prediction(canvas);
  
       try {
-          const response = await fetch('http://localhost:3001/save', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                  pixels: pixelValues,
-                  prediction: updatedPrediction.index,
-              }),
-          });
+        const updatedPrediction = await Prediction(canvas);
  
-          console.log(updatedPrediction)
-          if (!response.ok) {
-              throw new Error(`HTTP error! Status: ${response.status}`);
-          }
+        const response = await fetch('http://localhost:3001/save', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            pixels: pixelValues,
+            prediction: updatedPrediction.index,
+          }),
+        });
  
-          const data = await response.json();
-          console.log('Dessin enregistré avec succès :', data);
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+ 
+        const data = await response.json();
+        console.log('Dessin enregistré avec succès :', data);
       } catch (error) {
-          console.error('Erreur lors de l enregistrement du dessin :', error);
+        console.error('Erreur lors de l enregistrement du dessin :', error);
       }
+    };
   };
-}
  
   return (
     <div className="zone-manuscrit">
       <div className="manuscrit-card">
         <div className="manuscrit-column">
           <h1 className="saisie">OCR manuscrit</h1>
-          <canvas className="manuscrit-canvas" width={500} height={300} ref={canvasRef}></canvas>
+          <canvas
+            className="manuscrit-canvas"
+            width={500}
+            height={300}
+            ref={canvasRef}
+          ></canvas>
           <button className='rest' onClick={clearCanvas}>Reset</button>
         </div>
         <div className="manuscrit-column">
           <h1 className="saisie">Prédiction</h1>
-          <canvas className="manuscrit-canvas" width={500} height={300}></canvas>
+          <canvas
+            className="manuscrit-canvas"
+            width={500}
+            height={300}
+            onClick={() => saveDrawing()}
+          ></canvas>
           <button className='predire' onClick={saveDrawing}>Prédire</button>
           {prediction !== null && (
             <>
