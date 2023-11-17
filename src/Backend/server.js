@@ -1,31 +1,26 @@
 require('dotenv').config();
- 
 const cors = require('cors');
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const fs = require('fs');
- 
 const Drawing = require('./models/Images');
- 
 const app = express();
- 
 app.use(express.json());
 app.use(cors());
  
  
 app.use('/predict', express.static(path.join(__dirname, '..', 'FrontEnd','model')));
  
- 
-// Connexion à la base de données
+/*Connexion du server à la base de données*/
 mongoose.connect(process.env.MONGO_URI, {
-  dbName: 'DigitRecognition',
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
+dbName: 'DigitRecognition',
+useNewUrlParser: true,
+useUnifiedTopology: true,
 })
-  .then(() => {
-    console.log('Connecté à la base de données');
-    // Écoute du port
+.then(() => {
+  console.log('Connecté à la base de données');
+    /* Écoute du port*/
     app.listen(process.env.PORT, () => {
       console.log('Écoute des requêtes sur le port', process.env.PORT);
     });
@@ -34,7 +29,7 @@ mongoose.connect(process.env.MONGO_URI, {
     console.error(err);
   });
  
-//Route pour communiquer avec l'IA
+/*Les routes pour la communication  avec le model de l'IA*/
 app.get('/predict', async (req, res) => {
   const filePath = path.join(__dirname, '..', 'FrontEnd','model' ,'model.json');
   console.log(filePath);
@@ -51,13 +46,12 @@ app.get('/predict', async (req, res) => {
   });
 });
  
- 
-//Route pour sauvegarder les images
+/*Les routes pour sauvegarde  des images*/
 app.post('/save', async (req, res) => {
   try {
     const { pixels, prediction } = req.body;
  
-    // Création du dessin
+    /* Création du dessin*/
     const newDrawing = await Drawing.create({ pixels, prediction });
  
     console.log('Dessin créé avec succès');
