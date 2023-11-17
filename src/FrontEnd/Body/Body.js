@@ -1,130 +1,215 @@
 import React, { useEffect, useState, useRef } from 'react';
-import axios from 'axios';
+import * as tf from '@tensorflow/tfjs';
 import './Body.css';
-
-export default function Body() {
-  const canvasRef = useRef(null);
+ 
+const Body = () => {
   const [prediction, setPrediction] = useState(null);
+  const canvasRef = useRef(null);
   const hasDrawing = useRef(false);
-
+ 
   useEffect(() => {
     const canvas = canvasRef.current;
     const context = canvas.getContext('2d');
     let isDrawing = false;
-
+ 
+    // Methode qui permet d'écrire dans le tableau
     function startDrawing(e) {
       isDrawing = true;
       draw(e);
     }
-
+ 
+    // Methode qui permet de stopper l'écriture
     function stopDrawing() {
       isDrawing = false;
       context.beginPath();
       hasDrawing.current = true;
     }
-
+ 
+    // Methode qui permet de detecter l'activité d'écriture
     function draw(e) {
       if (!isDrawing) return;
-
+ 
       const mouseX = e.clientX - context.canvas.offsetLeft;
       const mouseY = e.clientY - context.canvas.offsetTop;
-
+ 
       context.lineWidth = 30;
       context.lineCap = 'round';
       context.strokeStyle = '#000';
-
+ 
       context.lineTo(mouseX, mouseY);
       context.stroke();
       context.beginPath();
       context.moveTo(mouseX, mouseY);
     }
-
+ 
     function handleKeyDown(e) {
-      if (e.ctrlKey && e.key === 'z') {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
         context.clearRect(0, 0, canvas.width, canvas.height);
+        hasDrawing.current = false;
+        setPrediction(null);
       }
     }
-
+ 
+    // Ajout des evenements
     const addEventListeners = () => {
       canvas.addEventListener('mousedown', startDrawing);
       canvas.addEventListener('mouseup', stopDrawing);
       canvas.addEventListener('mousemove', draw);
       window.addEventListener('keydown', handleKeyDown);
     };
-
+ 
+    // Suppression des evenements
     const removeEventListeners = () => {
       canvas.removeEventListener('mousedown', startDrawing);
       canvas.removeEventListener('mouseup', stopDrawing);
       canvas.removeEventListener('mousemove', draw);
       window.removeEventListener('keydown', handleKeyDown);
     };
-
+ 
     addEventListeners();
-
+ 
     return () => {
       removeEventListeners();
     };
   }, [canvasRef]);
-  
-  const saveDrawing = async () => {
-    if (hasDrawing.current) {
-      const canvas = canvasRef.current;
-      const image = canvas.toDataURL('image/png');
-  
-      try {
-        // Envoyer l'image à l'API avec Axios
-        const response = await axios.post('http://localhost:3001/api/images', { image });
-        
-        // Assurez-vous que la structure de réponse de l'API est correcte
-        const predictedDigit = response.data.prediction;
-        
-        // Mettre à jour l'état avec la prédiction
-        setPrediction(predictedDigit);
-        console.log('Prédiction réussie :', predictedDigit);
-      } catch (error) {
-        console.error('Erreur lors de la prédiction :', error);
-      }
-    }
-  };
-  
-
-  const resetCanvas = () => {
+ 
+  // Methode qui permet de reset
+  const clearCanvas = () => {
     const canvas = canvasRef.current;
     const context = canvas.getContext('2d');
     context.clearRect(0, 0, canvas.width, canvas.height);
     hasDrawing.current = false;
-    setPrediction(null); 
+    setPrediction(null);
   };
-
-
+ 
+  const ImageTransmission = (image) => {
+    // Prétraitement de l'image avant la prédiction
+    let tensor = tf.browser.fromPixels(image).resizeNearestNeighbor([28, 28]).mean(2).expandDims(2).expandDims().toFloat();
+    return tensor.div(255.0);
+};
+   const Prediction = async (image) => {
+    // Effectuer la prédiction avec le modèle TensorFlow
+    let tensor = ImageTransmission(image);
+ 
+    try {
+      // Charger le modèle
+      let model = await tf.loadLayersModel('http://localhost:3001/predict/model.json');
+ 
+      // Obtenir les prédictions
+      const predictions = await model.predict(tensor).data();
+ 
+ 
+      // Libérer les ressources du modèle après la prédiction
+      model.dispose();
+ 
+      // Afficher la prédiction dans le canvas
+      const updatedPrediction = displayLabel(predictions);
+ 
+      // Mettre à jour l'état avec la prédiction
+      setPrediction(updatedPrediction);
+ 
+ 
+      console.log(updatedPrediction)
+ 
+      // Maintenant, vous pouvez appeler la fonction de sauvegarde ici
+      saveDrawing(image);
+    } catch (error) {
+      console.error('Erreur lors de la prédiction :', error);
+    }
+  };
+ 
+// Méthode pour afficher l'étiquette avec la valeur maximale dans le tableau de données
+const displayLabel = (data) => {
+    let max = data[0];
+    let maxIndex = 0;
+ 
+    for (let i = 1; i < data.length; i++) {
+      if (data[i] > max) {
+        maxIndex = i;
+        max = data[i];
+      }
+    }
+ 
+    return {
+      index: maxIndex,
+      confidence: (max * 100).toFixed(2),
+    };
+  };
+ 
+// Fonction asynchrone pour enregistrer un dessin
+const saveDrawing = async () => {
+  const canvas = canvasRef.current;
+  const drawingData = canvas.toDataURL();
+ 
+  const image = new Image();
+  image.src = drawingData;
+ 
+  image.onload = async () => {
+      const canvasForModel = document.createElement('canvas');
+      const contextForModel = canvasForModel.getContext('2d');
+      canvasForModel.width = 28;
+      canvasForModel.height = 28;
+      contextForModel.drawImage(image, 0, 0, 28, 28);
+ 
+      const imageData = contextForModel.getImageData(0, 0, 28, 28);
+      const pixelData = imageData.data;
+ 
+      const pixelValues = [];
+      for (let i = 0; i < pixelData.length; i += 4) {
+          const pixelValue = (pixelData[i] + pixelData[i + 1] + pixelData[i + 2]) / 3;
+          pixelValues.push(pixelValue);
+      }
+ 
+      // Attendre la résolution de la fonction Prediction avant de continuer
+      const updatedPrediction = await Prediction(canvas);
+ 
+      try {
+          const response = await fetch('http://localhost:3001/save', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                  pixels: pixelValues,
+                  prediction: updatedPrediction.index,
+              }),
+          });
+ 
+          console.log(updatedPrediction)
+          if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+ 
+          const data = await response.json();
+          console.log('Dessin enregistré avec succès :', data);
+      } catch (error) {
+          console.error('Erreur lors de l enregistrement du dessin :', error);
+      }
+  };
+}
+ 
   return (
     <div className="zone-manuscrit">
       <div className="manuscrit-card">
         <div className="manuscrit-column">
           <h1 className="saisie">OCR manuscrit</h1>
-          <canvas
-            className="manuscrit-canvas"
-            width={500}
-            height={300}
-            ref={canvasRef}
-          ></canvas>
-          <button className='rest' onClick={resetCanvas}>Reset</button>
+          <canvas className="manuscrit-canvas" width={500} height={300} ref={canvasRef}></canvas>
+          <button className='rest' onClick={clearCanvas}>Reset</button>
         </div>
         <div className="manuscrit-column">
           <h1 className="saisie">Prédiction</h1>
-          <canvas
-            className="manuscrit-canvas"
-            width={500}
-            height={300}
-          ></canvas>
+          <canvas className="manuscrit-canvas" width={500} height={300}></canvas>
           <button className='predire' onClick={saveDrawing}>Prédire</button>
-          
           {prediction !== null && (
-            <p>Résultat de la prédiction : {prediction}</p>
+            <>
+              <h1 id="result">{prediction.index}</h1>
+              <p id="confidence">Confidence: {prediction.confidence}%</p>
+            </>
           )}
-
         </div>
       </div>
     </div>
   );
-}
+};
+ 
+export default Body;
