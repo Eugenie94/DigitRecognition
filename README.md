@@ -1,7 +1,22 @@
+# Liens projets
+
 Lien du trello : https://trello.com/b/eXJDdxGh/projet-ia
 
-Lien de la présentation :
+Lien de la présentation : https://docs.google.com/presentation/d/1RIne96P3CfSMacbOFMbKmgWzaUQTB2h_ISscnlJdqYo/edit?hl=FR#slide=id.g1eb6603478a_6_193
 
+Lien du notebook : https://colab.research.google.com/drive/1UUYI4A4XkCiS2tL_n2a0khfd4vrLRyIL#scrollTo=F1sTPSegYJ7a
+
+# Script pour installer les nodes_modules
+
+`npm install`
+
+# Script pour lancer le front
+
+`npm start`
+
+# Script pour lancer le back
+
+`node server.js`
 
 # Getting Started with Create React App
 
